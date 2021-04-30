@@ -7,7 +7,7 @@ def main():
 
     firefoxCookieMonster = FireFoxCookieMonster(databaseloc)
 
-    firefoxCookieMonster.openDatabase()
+    firefoxCookieMonster.retrieveData()
 
 
 if __name__ == "__main__":
