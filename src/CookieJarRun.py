@@ -1,13 +1,18 @@
 from src.FireFoxCookieMonster import FireFoxCookieMonster
 
 def main():
-    print("hello friend")
+
+
 
     databaseloc = 'cookies'
 
     firefoxCookieMonster = FireFoxCookieMonster(databaseloc)
 
-    firefoxCookieMonster.retrieveData()
+    firefoxCookieMonster.copyDatabase()
+
+    firefoxCookieMonster.retrieveCookies()
+
+
 
 
 if __name__ == "__main__":
