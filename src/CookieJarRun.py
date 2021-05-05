@@ -1,19 +1,17 @@
-from src.FireFoxCookieMonster import FireFoxCookieMonster
+from FireFoxCookieMonster import *
+
 
 def main():
 
 
 
-    databaseloc = 'cookies'
+    databaseLocations = findFirefoxCookieDatabase()
 
-    firefoxCookieMonster = FireFoxCookieMonster(databaseloc)
-
-    firefoxCookieMonster.copyDatabase()
-
-    firefoxCookieMonster.retrieveCookies()
-
-
-
+    for databaseLocation in databaseLocations:
+        print("Copying from "+databaseLocation)
+        firefoxCookieMonster = FireFoxCookieMonster(databaseLocation)
+        firefoxCookieMonster.copyDatabase()
+        print(firefoxCookieMonster.retrieveCookies())
 
 if __name__ == "__main__":
     main()
