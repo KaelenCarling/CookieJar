@@ -20,7 +20,8 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![Apache 2.0][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedinKaelen-url]
+[![LinkedIn][linkedin-shield-Kaelen]][linkedinKaelen-url]
+[![LinkedIn][linkedin-shield-Kyler]][linkedinKyler-url]
 
 
 
@@ -211,7 +212,8 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 [issues-url]: https://github.com/KaelenCarling/CookieJar/issues
 [license-shield]: https://img.shields.io/github/license/KaelenCarling/CookieJar
 [license-url]: https://github.com/KaelenCarling/CookieJar/blob/main/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-shield-Kaelen]: https://img.shields.io/badge/LinkedIn-KaelenCarling-blue
+[linkedin-shield-Kyler]: https://img.shields.io/badge/LinkedIn-KylerCarling-blue
 [linkedinKaelen-url]: https://linkedin.com/in/KaelenCarling
 [linkedinKyler-url]: https://linkedin.com/in/KylerCarling
 [product-screenshot]: images/screenshot.png
