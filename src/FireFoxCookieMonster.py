@@ -1,28 +1,26 @@
 import shutil
-import sqlite3
-import getpass
-import os
+from sqlite3 import connect
 from glob import glob
+import sys
+import os
+from os.path import expanduser
+import time
 
 
 class FireFoxCookieMonster:
-
     def __init__(self, location):
         self.dataBaseLoc = location
-        self.dataBase = sqlite3.connect('{}.sqlite'.format(self.dataBaseLoc))
-        self.localDBFile = ''
+        self.localDataBaseConnection = None
+        self.copiedDatabaseName = 'FirefoxCookies.sqlite'
 
-        self.dataBase.close()
+
 
     def retrieveCookies(self):
-        self.dataBase = sqlite3.connect('{}.sqlite'.format(self.dataBaseLoc))
-
-        curse = self.dataBase.cursor()
+        self.localDataBaseConnection = connect(self.copiedDatabaseName)
+        curse = self.localDataBaseConnection.cursor()
 
         query = 'SELECT * FROM moz_cookies ORDER BY id;'
-
         curse.execute(query)
-
         # row = curse.fetchone()
         row = curse.fetchall()
 
@@ -35,37 +33,56 @@ class FireFoxCookieMonster:
                                            'lastAccess': record[7], 'creationTime': record[8], 'isSecure': record[9],
                                            'inBrowsers': record[10], 'sameSite': record[11], 'rawSameSite': record[12],
                                            'schemeMap': record[13]}
-
-        # print(cookieDict)
-
-        self.dataBase.commit()
-        self.dataBase.close()
-
+        self.localDataBaseConnection.close()
         return cookieDict
 
     def copyDatabase(self):
-        searchDirectoryString = f'/home/{getpass.getuser()}/.mozilla/firefox/'
-
-        self.localDBFile = 'FirefoxCookies.sqlite'
-
-        cookieFileLoc = self.findCookieFile(searchDirectoryString)
-
-        print(cookieFileLoc)
-
-        shutil.copyfile(cookieFileLoc, self.localDBFile)
+        shutil.copyfile(self.dataBaseLoc, self.copiedDatabaseName)
 
 
 
-    def findCookieFile(self, directory):
+def  findFirefoxCookieDatabase():
+    currentOS = sys.platform
+    firefoxProfileDir = None
+    targetFile="cookies.sqlite"
+    databaseList = []
+    returnedDataBases = []
 
-        # recursively walks through the directory given
-        for fileDirectory in os.walk(directory):
 
-            # uses glob to find files which match the criteria. if you delete the *.* it will find files without
-            # types (mainly directories)
-            for file in glob(os.path.join(fileDirectory[0], '*.*')):
 
-                #checks to see if it is the correct cookies file
-                if 'cookies.sqlite' in file and 'cookies.sqlite-wal' not in file:
-                    return file
+    if currentOS.startswith('freebsd') or currentOS.startswith('linux'):
+        homeDir = expanduser("~")
+        firefoxProfileDir = homeDir+"/.mozilla"
+    elif currentOS.startswith('win32'):
+        username = os.getlogin()
+        firefoxProfileDir = "C:/Users/"+username+"/AppData/Roaming/Mozilla/Firefox"
+
+    for dirName, subdirList, fileList in os.walk(firefoxProfileDir):
+      #  print('Found directory: %s' % dirName)
+        for fname in fileList:
+            if fname == targetFile:
+                foundDatabase=dirName+"/"+fname
+                databaseList.append(foundDatabase)
+
+    if len(databaseList) == 0:
+        raise FileNotFoundError("No Cookie Database Files Were Found in "+ firefoxProfileDir)
+    elif len(databaseList) == 1:
+        #return the database without sorting or prompting the user if only one choice is available.
+      return databaseList
+    else:
+        # we start be labeling the first entry 1
+        numberOfDatabases = 1
+        # sort the files in descending order of time modified
+        databaseList = sorted(databaseList, key=lambda t: -os.stat(t).st_mtime)
+        for databaseFile in databaseList:
+            modTimesinceEpoc = os.path.getmtime(databaseFile)
+            # Convert seconds since epoch to readable timestamp
+            modificationTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(modTimesinceEpoc))
+            print(str(numberOfDatabases)+". "+"Found: "+databaseFile +" (Last Modified: " + modificationTime+")")
+            numberOfDatabases+=1
+        userChoices = input("Please enter a comma delineated(EX: 1,3,4) choice: ").split(",")
+        for choice in userChoices:
+            choice=int(choice)
+            returnedDataBases.append(databaseList[choice-1])
+        return returnedDataBases
 
