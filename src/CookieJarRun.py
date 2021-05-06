@@ -33,9 +33,15 @@ class MainApplication(tkinter.Frame):
 
         # ensure a consistent GUI size
         self.grid_propagate(False)
+
         # implement stretchability
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        root.grid_rowconfigure(0, weight=0)
+        root.grid_rowconfigure(1, weight=1)
+        root.grid_columnconfigure(0, weight=0)
+        root.grid_columnconfigure(1, weight=1)
+        root.grid_columnconfigure(2, weight=0)
+
+        root.minsize(width=700, height=420)
 
         # title the application
         root.title('CookieJar')
@@ -59,10 +65,12 @@ class MainApplication(tkinter.Frame):
         # construct the grid of the application
         # label.grid(row=0, column=0)
         root.config(menu=menuBar)
-        searchButton.grid(row=1, column=0, padx=1, pady=1)
-        searchQuery.grid(row=1, column=1, columnspan=5, padx=1, pady=1)
-        cookiesDisplayBox.grid(row=2, column=0, columnspan=5, padx=2, pady=2)
-        cookieScrollbar.grid(row=2, column=5, sticky='NSEW')
+        searchButton.grid(row=0, column=0, sticky='NEW')
+        searchQuery.grid(row=0, column=1, sticky='NEW')
+        cookiesDisplayBox.grid(row=1, column=0, columnspan=2, sticky='NSEW')
+        #cookiesDisplayBox.pack(fill='both', side='left', )
+        cookieScrollbar.grid(row=1, column=2, sticky='NSW')
+
 
         cookiesDisplayBox.insert(END, processDictionary(cookieDict))
         cookiesDisplayBox['yscrollcommand'] = cookieScrollbar.set
