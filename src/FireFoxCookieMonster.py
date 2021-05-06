@@ -1,6 +1,6 @@
 import shutil
+from pathlib import Path
 from sqlite3 import connect
-from glob import glob
 import sys
 import os
 from os.path import expanduser
@@ -28,7 +28,7 @@ class FireFoxCookieMonster:
 
         # parses into a dictionary of dictionaries that contains all the values
         for record in row:
-            cookieDict[str(record[00])] = {'originAttributes': str(record[1]), 'name': record[2], 'value': record[3],
+            cookieDict[record[00]] = {'originAttributes': str(record[1]), 'name': record[2], 'value': record[3],
                                            'host': record[4], 'path': record[5], 'expiry': record[6],
                                            'lastAccess': record[7], 'creationTime': record[8], 'isSecure': record[9],
                                            'inBrowsers': record[10], 'sameSite': record[11], 'rawSameSite': record[12],
@@ -48,14 +48,13 @@ def  findFirefoxCookieDatabase():
     databaseList = []
     returnedDataBases = []
 
-
+    print()
 
     if currentOS.startswith('freebsd') or currentOS.startswith('linux'):
         homeDir = expanduser("~")
         firefoxProfileDir = homeDir+"/.mozilla"
     elif currentOS.startswith('win32'):
-        username = os.getlogin()
-        firefoxProfileDir = "C:/Users/"+username+"/AppData/Roaming/Mozilla/Firefox"
+        firefoxProfileDir = str(Path.home()) +"\AppData\Roaming\Mozilla\Firefox"
 
     for dirName, subdirList, fileList in os.walk(firefoxProfileDir):
       #  print('Found directory: %s' % dirName)
@@ -76,10 +75,12 @@ def  findFirefoxCookieDatabase():
         databaseList = sorted(databaseList, key=lambda t: -os.stat(t).st_mtime)
         for databaseFile in databaseList:
             modTimesinceEpoc = os.path.getmtime(databaseFile)
+
             # Convert seconds since epoch to readable timestamp
             modificationTime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(modTimesinceEpoc))
             print(str(numberOfDatabases)+". "+"Found: "+databaseFile +" (Last Modified: " + modificationTime+")")
             numberOfDatabases+=1
+
         userChoices = input("Please enter a comma delineated(EX: 1,3,4) choice: ").split(",")
         for choice in userChoices:
             choice=int(choice)
