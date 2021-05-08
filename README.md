@@ -105,11 +105,11 @@ This is an example of how to list things you need to use the software and how to
 #### Linux
 * Python
   ```sh
-  Sudo apt-get install python
+  sudo apt-get install python
   ```
   or if your using an arch based install
   ```sh
-  Sudo pacman -S python
+  sudo pacman -S python
   ```
 #### Windows
 * Python
